@@ -1,6 +1,6 @@
 #include"WindowContainer.h"
 
-bool RenderWindow::Initialize(HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
+bool RenderWindow::Initialize(WindowContainer*pWindowContainer, HINSTANCE hInstance, std::string window_title, std::string window_class, int width, int height)
 {
 	this->hInstance = hInstance;
 	this->width = width;
@@ -23,7 +23,7 @@ bool RenderWindow::Initialize(HINSTANCE hInstance, std::string window_title, std
 		NULL,
 		NULL,
 		this->hInstance,
-		nullptr);
+		pWindowContainer);
 
 	if (this->handle == NULL)
 	{
@@ -80,8 +80,40 @@ RenderWindow::~RenderWindow()
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	//return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	switch (uMsg)
+	{
+	/*case WM_CHAR:
+	{
+		unsigned char letter = static_cast<unsigned char>(wParam);
+		return 0;
+	}
+	case WM_KEYDOWN:
+	{	
+		unsigned char keycode = static_cast<unsigned char>(wParam);
+		return 0;
+	}*/
 
+	case WM_CREATE:
+	{
+		const CREATESTRUCTW* const pCreate = reinterpret_cast<CREATESTRUCTW*>(lParam);
+		WindowContainer* pWindow = reinterpret_cast<WindowContainer*>(pCreate->lpCreateParams);
+		if (pWindow == nullptr)
+		{
+			ErrorLogger::Log("Critical Error: Pointer to window container is null during WM_CREATE");
+			exit(-1);
+		}
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
+		
+
+
+		OutputDebugStringA("THE Window was Created\n");
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
+
+	default:
+		return DefWindowProc(hwnd, uMsg, wParam, lParam);
+	}
 }
 
 
