@@ -78,7 +78,26 @@ RenderWindow::~RenderWindow()
 
 }
 
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK HandleMsgRedirect(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	switch (uMsg)
+	{
+
+	case WM_CLOSE:
+		DestroyWindow(hwnd);
+		return 0;
+
+
+	default:
+	{
+		WindowContainer* const pWindow = reinterpret_cast<WindowContainer*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+		return pWindow-> WindowProc(hwnd, uMsg, wParam, lParam);
+	}
+	}
+}
+
+
+LRESULT CALLBACK HandleMessageSetup(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	//return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	switch (uMsg)
@@ -104,7 +123,8 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			exit(-1);
 		}
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
-		
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(HandleMsgRedirect));
+		return pWindow->WindowProc(hwnd, uMsg, wParam, lParam);
 
 
 		OutputDebugStringA("THE Window was Created\n");
@@ -121,7 +141,9 @@ void RenderWindow::RegisterWindowClass()
 {
 	WNDCLASSEX wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-	wc.lpfnWndProc = WindowProc;
+	wc.lpfnWndProc = HandleMessageSetup;
+	//wc.lpfnWndProc = WindowProc;
+
 	wc.cbClsExtra = 0;
 	wc.cbWndExtra = 0;
 	wc.hInstance = this->hInstance;
