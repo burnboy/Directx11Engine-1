@@ -45,6 +45,12 @@
     <ClCompile Include="Keyboard\KeyboardEvent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Mouse\MouseEvent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse\MouseClass.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StringConverter.h">
@@ -129,6 +135,12 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Includes\XboxDDSTextureLoader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse\MouseEvent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse\MouseClass.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
